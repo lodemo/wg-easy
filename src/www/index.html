@@ -84,7 +84,7 @@
         </div>
 
         <div class="shadow-md rounded-lg bg-white dark:bg-neutral-700 overflow-hidden">
-          <div class="flex flex-row flex-auto items-center p-3 px-5 border-b-2 border-gray-100 dark:border-neutral-600">
+          <div class="flex flex-row flex-auto flex-wrap items-center p-3 px-5 border-b-2 border-gray-100 dark:border-neutral-600">
             <div class="flex-grow">
               <p class="text-2xl font-medium dark:text-neutral-200">Clients</p>
             </div>
@@ -99,9 +99,9 @@
                 <span class="text-sm">New</span>
               </button>
             </div>
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0 pl-1">
               <div>
-                <select @change="onSortationChange()" v-model="sortation" class="form-select appearance-none block w-full hover:bg-red-800 hover:border-red-800 hover:text-white text-gray-700 text-sm border-2 border-gray-100 px-4 py-2 bg-white bg-clip-padding bg-no-repeat rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-red-800 focus:outline-none">
+                <select @change="onSortationChange()" v-model="sortation" class="form-select block w-full hover:bg-red-800 hover:border-red-800 hover:text-white text-gray-700 text-sm border-2 border-gray-100 px-4 py-2 bg-clip-padding bg-no-repeat rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-red-800 focus:outline-none dark:text-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-red-800 dark:hover:text-white">
                   <option selected value="name">Sort by name</option>
                   <option value="address">Sort by IP</option>
                 </select>
@@ -232,8 +232,8 @@
                   </div>
                 </div>
 
-                <div class="flex items-center justify-end w-full sm:w-auto mt-3 sm:mt-0">
-                  <div class="text-gray-400 dark:text-neutral-400 flex gap-1 items-center justify-between">
+                <div class="text-right">
+                  <div class="text-gray-400">
 
                     <!-- Enable/Disable -->
                     <div @click="disableClient(client)" v-if="client.enabled === true" title="Disable Client"
