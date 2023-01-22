@@ -268,6 +268,7 @@ new Vue({
         return 0;
       });
     },
+  },
   filters: {
     bytes,
     timeago: value => {
