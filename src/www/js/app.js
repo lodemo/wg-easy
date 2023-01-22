@@ -36,14 +36,19 @@ new Vue({
     clientDelete: null,
     clientCreate: null,
     clientCreateName: '',
+    clientCreateAllowedIPs: '',
     clientEditName: null,
     clientEditNameId: null,
     clientEditAddress: null,
     clientEditAddressId: null,
+    clientEditAllowedIPs: null,
+	  clientEditAllowedIPsId: null,
     qrcode: null,
 
     currentRelease: null,
     latestRelease: null,
+
+    isDark: null,
 
     chartOptions: {
       chart: {
@@ -110,6 +115,7 @@ new Vue({
         },
       },
     },
+    sortation: 'name',
   },
   methods: {
     dateTime: value => {
@@ -127,6 +133,7 @@ new Vue({
       if (!this.authenticated) return;
 
       const clients = await this.api.getClients();
+
       this.clients = clients.map(client => {
         if (client.name.includes('@') && client.name.includes('.')) {
           client.avatar = `https://www.gravatar.com/avatar/${md5(client.name)}?d=blank`;
@@ -169,6 +176,7 @@ new Vue({
 
         return client;
       });
+      this.onSortationChange();
     },
     login(e) {
       e.preventDefault();
@@ -207,10 +215,17 @@ new Vue({
         });
     },
     createClient() {
-      const name = this.clientCreateName;
-      if (!name) return;
+      const client = {}
 
-      this.api.createClient({ name })
+      if(!this.clientCreateName)
+        return;
+
+      client.name = this.clientCreateName;
+
+      if(this.clientCreateAllowedIPs)
+        client.allowedIPs = this.clientCreateAllowedIPs;
+
+      this.api.createClient(client)
         .catch(err => alert(err.message || err.toString()))
         .finally(() => this.refresh().catch(console.error));
     },
@@ -234,10 +249,40 @@ new Vue({
         .catch(err => alert(err.message || err.toString()))
         .finally(() => this.refresh().catch(console.error));
     },
+    updateClientAllowedIPs(client, allowedIPs) {
+      this.api.updateClientAllowedIPs({ clientId: client.id, allowedIPs })
+        .catch(err => alert(err.message || err.toString()))
+        .finally(() => this.refresh().catch(console.error));
+    },
     updateClientAddress(client, address) {
       this.api.updateClientAddress({ clientId: client.id, address })
         .catch(err => alert(err.message || err.toString()))
         .finally(() => this.refresh().catch(console.error));
+    },
+    toggleTheme() {
+        if (this.isDark) {
+          localStorage.theme = "light";
+          document.documentElement.classList.remove('dark');
+        } else {
+          localStorage.theme = "dark";
+          document.documentElement.classList.add('dark');
+        }
+        this.isDark = !this.isDark;
+    },
+    onSortationChange() {
+      this.clients.sort((a, b) => {
+        const nameA = a[this.sortation].toUpperCase(); // ignore upper and lowercase
+        const nameB = b[this.sortation].toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        // names must be equal
+        return 0;
+      });
     },
   },
   filters: {
@@ -247,6 +292,11 @@ new Vue({
     },
   },
   mounted() {
+    this.isDark = false;
+    if (localStorage.theme === 'dark') {
+      this.isDark = true;
+    }
+
     this.api = new API();
     this.api.getSession()
       .then(session => {

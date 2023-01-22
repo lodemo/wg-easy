@@ -72,11 +72,11 @@ class API {
     })));
   }
 
-  async createClient({ name }) {
+  async createClient({ name, allowedIPs }) {
     return this.call({
       method: 'post',
       path: '/wireguard/client',
-      body: { name },
+      body: { name, allowedIPs },
     });
   }
 
@@ -106,6 +106,14 @@ class API {
       method: 'put',
       path: `/wireguard/client/${clientId}/name/`,
       body: { name },
+    });
+  }
+
+  async updateClientAllowedIPs({ clientId, allowedIPs }) {
+    return this.call({
+      method: 'put',
+      path: `/wireguard/client/${clientId}/allowedIPs/`,
+      body: { allowedIPs },
     });
   }
 

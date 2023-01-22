@@ -140,7 +140,7 @@ AllowedIPs = ${client.address}/32`;
       publicKey: client.publicKey,
       createdAt: new Date(client.createdAt),
       updatedAt: new Date(client.updatedAt),
-      allowedIPs: client.allowedIPs,
+      allowedIPs: client.allowedIPs || WG_ALLOWED_IPS,
 
       persistentKeepalive: null,
       latestHandshakeAt: null,
@@ -161,7 +161,7 @@ AllowedIPs = ${client.address}/32`;
           publicKey,
           preSharedKey, // eslint-disable-line no-unused-vars
           endpoint, // eslint-disable-line no-unused-vars
-          allowedIps, // eslint-disable-line no-unused-vars
+          allowedIPs, // eslint-disable-line no-unused-vars
           latestHandshakeAt,
           transferRx,
           transferTx,
@@ -206,7 +206,7 @@ ${WG_MTU ? `MTU = ${WG_MTU}` : ''}
 [Peer]
 PublicKey = ${config.server.publicKey}
 PresharedKey = ${client.preSharedKey}
-AllowedIPs = ${WG_ALLOWED_IPS}
+AllowedIPs = ${client.allowedIPs}
 PersistentKeepalive = ${WG_PERSISTENT_KEEPALIVE}
 Endpoint = ${WG_HOST}:${WG_PORT}`;
   }
@@ -219,9 +219,13 @@ Endpoint = ${WG_HOST}:${WG_PORT}`;
     });
   }
 
-  async createClient({ name }) {
+  async createClient({ name, allowedIPs }) {
     if (!name) {
       throw new Error('Missing: Name');
+    }
+
+    if(!allowedIPs) {
+      allowedIPs = WG_ALLOWED_IPS;
     }
 
     const config = await this.getConfig();
@@ -255,6 +259,7 @@ Endpoint = ${WG_HOST}:${WG_PORT}`;
       privateKey,
       publicKey,
       preSharedKey,
+      allowedIPs,
 
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -300,6 +305,15 @@ Endpoint = ${WG_HOST}:${WG_PORT}`;
     const client = await this.getClient({ clientId });
 
     client.name = name;
+    client.updatedAt = new Date();
+
+    await this.saveConfig();
+  }
+
+  async updateClientAllowedIPs({ clientId, allowedIPs }) {
+    const client = await this.getClient({ clientId });
+
+    client.allowedIPs = allowedIPs;
     client.updatedAt = new Date();
 
     await this.saveConfig();
