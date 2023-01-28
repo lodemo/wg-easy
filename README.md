@@ -13,6 +13,15 @@ You have found the easiest way to install & manage WireGuard on any Linux host!
   <img src="./assets/screenshot.png" width="802" />
 </p>
 
+## Fork
+
+This fork integrates multiple open pull-requests of the original repository. Further, additional configuration options were added.
+
+* Client Allowed IPs configuration
+* Dark mode
+* Mobile optimization
+* Client sorting
+
 ## Features
 
 * All-in-one: WireGuard + Web UI.
